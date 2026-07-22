@@ -1,0 +1,514 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>IT Support Prep — ElevenLabs</title>
+<style>
+  :root {
+    --bg: #f6f7f9; --card: #ffffff; --ink: #1a1d21; --muted: #6b7280;
+    --border: #e5e7eb; --accent: #2563eb; --accent-soft: #dbeafe;
+    --chip: #eef0f3; --chip-active: #1a1d21; --chip-active-ink: #ffffff;
+    --good: #059669; --good-soft: #d1fae5; --bad: #dc2626; --bad-soft: #fee2e2;
+  }
+  :root[data-theme="dark"] {
+    --bg: #0f1115; --card: #171a20; --ink: #e8eaed; --muted: #9aa0aa;
+    --border: #2a2e37; --accent: #60a5fa; --accent-soft: #1e2a44;
+    --chip: #1f232b; --chip-active: #e8eaed; --chip-active-ink: #0f1115;
+    --good: #34d399; --good-soft: #06301f; --bad: #f87171; --bad-soft: #3a1414;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--bg); color: var(--ink);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    line-height: 1.5; padding: 20px; max-width: 900px; margin: 0 auto;
+  }
+  header { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 6px; }
+  h1 { font-size: 1.15rem; margin: 0; font-weight: 800; }
+  .sub { color: var(--muted); font-size: 0.8rem; margin: 0 0 16px; }
+  .top-btns { display: flex; gap: 8px; }
+  .icon-btn {
+    background: var(--chip); border: none; color: var(--ink); border-radius: 10px;
+    padding: 9px 12px; font-size: 0.8rem; font-weight: 700; cursor: pointer;
+  }
+  .decks { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 14px; }
+  .deck-chip {
+    background: var(--chip); border: none; color: var(--ink); border-radius: 999px;
+    padding: 9px 14px; font-size: 0.82rem; font-weight: 700; cursor: pointer;
+  }
+  .deck-chip.active { background: var(--chip-active); color: var(--chip-active-ink); }
+  .bar2 { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 10px; flex-wrap: wrap; }
+  .counter { color: var(--muted); font-size: 0.8rem; }
+  .mini-btns { display: flex; gap: 8px; }
+  .card {
+    background: var(--card); border: 1px solid var(--border); border-radius: 18px;
+    padding: 30px 26px; min-height: 320px; position: relative;
+    display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center;
+  }
+  .card.quiz { cursor: default; }
+  .card.concept { cursor: pointer; }
+  .deck-label {
+    position: absolute; top: 14px; left: 18px; font-size: 0.66rem; font-weight: 800;
+    text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted);
+  }
+  .star {
+    position: absolute; top: 10px; right: 14px; font-size: 1.25rem; background: none;
+    border: none; cursor: pointer; color: var(--muted); opacity: 0.45;
+  }
+  .star.on { opacity: 1; color: #d9a406; }
+  .kind-tag {
+    position: absolute; top: 14px; right: 44px; font-size: 0.6rem; font-weight: 800;
+    text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted);
+    background: var(--chip); padding: 3px 8px; border-radius: 999px;
+  }
+  .term { font-size: 1.9rem; font-weight: 750; line-height: 1.3; }
+  .prompt { font-size: 1.35rem; font-weight: 650; line-height: 1.4; max-width: 46ch; }
+  .answer-term { font-size: 1.5rem; font-weight: 750; color: var(--accent); margin-bottom: 6px; }
+  .def { font-size: 1.08rem; color: var(--ink); max-width: 52ch; margin-top: 10px; line-height: 1.65; }
+  .hint { margin-top: 20px; font-size: 0.72rem; color: var(--muted); }
+  .qwrap { width: 100%; max-width: 560px; }
+  .question { font-size: 1.3rem; font-weight: 700; line-height: 1.4; margin-bottom: 18px; }
+  .opts { display: flex; flex-direction: column; gap: 10px; text-align: left; }
+  .opt {
+    background: var(--bg); border: 1.5px solid var(--border); color: var(--ink);
+    border-radius: 12px; padding: 13px 16px; font-size: 0.98rem; cursor: pointer;
+    display: flex; gap: 10px; align-items: flex-start; font-weight: 550; width: 100%;
+  }
+  .opt:hover { border-color: var(--accent); }
+  .opt .key { font-weight: 800; color: var(--muted); }
+  .opt.correct { border-color: var(--good); background: var(--good-soft); }
+  .opt.wrong { border-color: var(--bad); background: var(--bad-soft); }
+  .opt.disabled { cursor: default; }
+  .opt.disabled:hover { border-color: var(--border); }
+  .opt.correct.disabled:hover { border-color: var(--good); }
+  .opt.wrong.disabled:hover { border-color: var(--bad); }
+  .why {
+    margin-top: 16px; text-align: left; font-size: 0.95rem; color: var(--ink);
+    background: var(--accent-soft); border-radius: 12px; padding: 12px 14px; line-height: 1.6;
+  }
+  .why b { color: var(--accent); }
+  .continue {
+    margin-top: 16px; width: 100%; background: var(--accent); color: #fff; border: none;
+    border-radius: 12px; padding: 14px; font-size: 0.95rem; font-weight: 800; cursor: pointer;
+  }
+  .grade-row { width: 100%; max-width: 560px; display: flex; gap: 10px; margin-top: 14px; }
+  .grade-btn { flex: 1; padding: 15px; border-radius: 14px; border: none; font-size: 0.95rem; font-weight: 800; cursor: pointer; }
+  .grade-btn.again { background: var(--bad-soft); color: var(--bad); }
+  .grade-btn.got { background: var(--good-soft); color: var(--good); }
+  .nav-row { display: flex; justify-content: space-between; gap: 8px; margin-top: 12px; }
+  .nav-btn { background: var(--chip); border: none; color: var(--ink); border-radius: 12px; padding: 12px 18px; font-size: 0.85rem; font-weight: 700; cursor: pointer; }
+  .empty { color: var(--muted); font-size: 1.15rem; font-weight: 650; }
+  .empty small { display: block; font-size: 0.9rem; font-weight: 400; margin-top: 8px; }
+  footer { margin-top: 20px; text-align: center; color: var(--muted); font-size: 0.72rem; line-height: 1.7; }
+  @media (max-width: 520px) {
+    .term { font-size: 1.5rem; } .question { font-size: 1.12rem; } .prompt { font-size: 1.1rem; }
+    .card { min-height: 280px; padding: 26px 18px; }
+  }
+</style>
+</head>
+<body>
+<header>
+  <h1>🎧 IT Support Prep</h1>
+  <div class="top-btns">
+    <button class="icon-btn" id="dirBtn">Term → Def</button>
+    <button class="icon-btn" id="themeBtn">◐</button>
+  </div>
+</header>
+<p class="sub">Day-1 prep for the ElevenLabs TechSupport Engineer role · spaced repetition + quizzes · saves per device, works offline</p>
+
+<div class="decks" id="deckBar"></div>
+
+<div class="bar2">
+  <span class="counter" id="counter"></span>
+  <div class="mini-btns">
+    <button class="icon-btn" id="shuffleBtn">Shuffle</button>
+    <button class="icon-btn" id="resetBtn">Reset deck</button>
+  </div>
+</div>
+
+<div class="card concept" id="card">
+  <span class="deck-label" id="deckLabel"></span>
+  <span class="kind-tag" id="kindTag" style="display:none"></span>
+  <button class="star" id="starBtn">★</button>
+  <div id="cardBody"></div>
+</div>
+
+<div class="grade-row" id="gradeRow" style="visibility:hidden">
+  <button class="grade-btn again" id="againBtn">1 · Didn't know</button>
+  <button class="grade-btn got" id="gotBtn">2 · Got it</button>
+</div>
+
+<div class="nav-row">
+  <button class="nav-btn" id="prevBtn">← Prev</button>
+  <button class="nav-btn" id="nextBtn">Skip →</button>
+</div>
+
+<footer>
+  Space = flip · 1 = didn't know · 2 = got it · ← → move · ★ = hard deck.
+  Concept cards you self-grade; quiz cards grade themselves. Both feed the ⏰ Due schedule.
+</footer>
+
+<script>
+// A card is a QUIZ if it has opts[]; otherwise a CONCEPT card {t: term, d: definition}.
+const DECKS = [
+
+{ id:"elevenlabs", name:"🎧 ElevenLabs", cards:[
+  {t:"ElevenLabs — what it is", d:"An AI research + product company (founded Jan 2023) building human-like AI audio. Three platforms: ElevenAgents (voice/chat agents), ElevenCreative (speech/music/image/video), ElevenAPI (audio models for developers)."},
+  {t:"ElevenAgents", d:"Lets businesses deploy voice & chat agents at scale — with the integrations, testing, monitoring and reliability needed for real customer experiences."},
+  {t:"ElevenCreative", d:"Lets creators and marketers generate and edit speech, music, image and video across 70+ languages."},
+  {t:"ElevenAPI", d:"Gives developers access to ElevenLabs' leading AI audio foundational models."},
+  {t:"How ElevenLabs works (culture)", d:"High-velocity (rapid experimentation, lean autonomous teams, minimal bureaucracy), 'impact not job titles', AI-first across the whole company, excellence everywhere, global team."},
+  {t:"The TechSupport Engineer role", d:"London, hybrid (4 days on-site). Owns device lifecycle, office/AV/end-user support, IT onboarding calls, Tech Ops projects, automation & Slack bots, and documentation."},
+  {q:"What are ElevenLabs' three main platforms?", opts:["Agents, Creative, API","Voice, Vision, Cloud","Speech, Search, Storage","Chat, Compute, CDN"], a:0, why:"ElevenAgents (agents), ElevenCreative (content generation) and ElevenAPI (developer audio models)."},
+  {q:"Where is the TechSupport Engineer role based, and what's the schedule?", opts:["Fully remote, anywhere","London — hybrid, 4 days on-site","New York — fully on-site","Remote with quarterly travel"], a:1, why:"London office, hybrid: 4 days on-site and 1 day working from home."},
+  {q:"Which is listed as a BONUS skill for the role?", opts:["Kubernetes administration","Bash scripting","Active Directory forests","Cisco IOS routing"], a:1, why:"Bash scripting is a bonus — it powers the automations and Slack bots the role builds."},
+]},
+
+{ id:"macos", name:"🍎 macOS", cards:[
+  {t:"Force quit an app", d:"⌘ + ⌥ + Esc opens Force Quit. Or Activity Monitor → select → Quit. Terminal: killall AppName, or kill <pid>."},
+  {t:"Activity Monitor", d:"Shows CPU, memory, energy, disk and network usage per process; lets you force-quit a runaway process. The macOS analog of Windows Task Manager."},
+  {t:"FileVault", d:"macOS full-disk encryption. Data at rest is unreadable without the login password or recovery key. Usually enforced by MDM on company Macs."},
+  {t:"Gatekeeper", d:"Security feature that only lets apps run if they're signed/notarised by Apple; blocks unidentified developers by default."},
+  {t:"Recovery Mode", d:"Boot environment for repair/reinstall. Apple Silicon: hold the power button until 'Loading startup options'. Intel: hold ⌘ + R. Gives Disk Utility, reinstall macOS, and Terminal."},
+  {t:"Safe Mode", d:"Boots with minimal extensions and clears some caches to isolate software issues. Apple Silicon: hold power → select disk while holding Shift."},
+  {t:"Disk Utility — First Aid", d:"Checks and repairs disk/volume and filesystem errors. Run it from Recovery if the disk won't mount."},
+  {t:"Kernel panic", d:"The macOS equivalent of a crash — the OS halts and restarts. Often caused by a driver, failing hardware, or a bad peripheral."},
+  {q:"A Mac app is frozen. Fastest built-in way to force quit it?", opts:["Restart the whole Mac","⌘ + ⌥ + Esc (Force Quit)","Reinstall the app","Hold the power button"], a:1, why:"⌘ + ⌥ + Esc opens the Force Quit dialog instantly — no reboot needed."},
+  {q:"What does FileVault do?", opts:["Backs files up to iCloud","Encrypts the whole disk","Scans for viruses","Acts as a firewall"], a:1, why:"FileVault is full-disk encryption; data is unreadable without the password/recovery key."},
+  {q:"On an Apple Silicon Mac, how do you enter Recovery Mode?", opts:["Hold ⌘ + R at boot","Tap Esc repeatedly","Hold the power button until startup options load","Hold Shift while booting"], a:2, why:"Apple Silicon uses 'hold power until Loading startup options'. ⌘ + R is the older Intel method."},
+]},
+
+{ id:"mdm", name:"💻 MDM & Devices", cards:[
+  {t:"MDM (Mobile Device Management)", d:"Software (Jamf, Kandji, Intune) to remotely configure, secure, deploy apps to, lock and wipe a fleet of devices from one console."},
+  {t:"Apple Business Manager (ABM)", d:"Apple's portal that ties company-purchased devices to your MDM so they can auto-enroll (zero-touch)."},
+  {t:"Automated Device Enrollment (ADE / DEP)", d:"Devices bought through ABM auto-enroll into MDM on first boot. Enrollment can be mandatory and non-removable (supervised) — this is 'zero-touch'."},
+  {t:"Supervised device", d:"A higher management level (via ADE) that unlocks extra MDM controls and makes management non-removable by the user."},
+  {t:"Configuration profile", d:"A signed settings file pushed by MDM to configure Wi-Fi, VPN, certificates, restrictions and more."},
+  {t:"Secure wipe / cryptographic erase", d:"Remotely erasing a device at end of life or on loss. Modern Macs destroy the FileVault keys, making data instantly unrecoverable."},
+  {t:"Device lifecycle", d:"Procure → enroll/setup → assign → support → return → wipe → reissue or retire. TechSupport owns this end to end."},
+  {q:"What is 'zero-touch' deployment?", opts:["Manually imaging every laptop","A device auto-enrolls in MDM on first boot via ABM/ADE","Shipping laptops with no OS","Letting users install their own OS"], a:1, why:"Company devices registered in ABM auto-enroll into MDM on first boot — no hands-on imaging."},
+  {q:"An employee leaves and their MacBook is lost. Best action?", opts:["Nothing — it's encrypted","Remote lock/wipe via MDM","Email them to post it back","Change the office Wi-Fi password"], a:1, why:"Use MDM to remote lock/wipe; cryptographic erase makes the FileVault data unrecoverable."},
+  {q:"Which of these are examples of MDM tools?", opts:["Jamf and Kandji","Slack and Zoom","Chrome and Safari","Word and Excel"], a:0, why:"Jamf and Kandji are Apple-focused MDMs (Intune is the cross-platform Microsoft one)."},
+]},
+
+{ id:"net", name:"🌐 Networking", cards:[
+  {t:"IP address", d:"A numeric address identifying a device on a network. IPv4 is four octets (e.g. 192.168.1.10). Private ranges: 10.x, 172.16–31.x, 192.168.x."},
+  {t:"DNS", d:"Domain Name System — translates human names (google.com) into IP addresses. When things break mysteriously, 'it's always DNS'."},
+  {t:"DHCP", d:"Dynamic Host Configuration Protocol — automatically hands a device its IP, subnet mask, default gateway and DNS servers when it joins a network."},
+  {t:"Default gateway", d:"The router IP a device sends traffic to whenever the destination is outside its own subnet."},
+  {t:"Subnet mask", d:"Defines which part of an IP is the network and which is the host (255.255.255.0 = /24). Decides what counts as 'local'."},
+  {t:"VPN", d:"Virtual Private Network — an encrypted tunnel over the internet so a remote device behaves as if it's on the private/office network."},
+  {t:"2.4 GHz vs 5 GHz Wi-Fi", d:"2.4 GHz = longer range but slower and more congested. 5 GHz = faster but shorter range and less interference."},
+  {t:"ping / traceroute", d:"ping tests reachability and latency to a host. traceroute shows the hop-by-hop path packets take to get there."},
+  {t:"TCP vs UDP", d:"TCP = reliable, ordered, connection-based (web, email). UDP = fast, connectionless, best-effort (voice, video, DNS)."},
+  {q:"A user can reach websites by IP but not by name. Most likely cause?", opts:["Broken monitor","A DNS problem","Dead battery","Wrong keyboard layout"], a:1, why:"Names failing while raw IPs work points straight at DNS resolution."},
+  {q:"What does DHCP do?", opts:["Encrypts traffic","Auto-assigns IP settings to devices","Blocks ports","Resolves names to IP addresses"], a:1, why:"DHCP auto-assigns IP, subnet, gateway and DNS. (Name → IP is DNS's job.)"},
+  {q:"Which port is HTTPS?", opts:["80","22","443","53"], a:2, why:"443 = HTTPS. 80 = HTTP, 22 = SSH, 53 = DNS."},
+  {q:"Which of these is a private IP address?", opts:["8.8.8.8","192.168.1.10","172.32.5.4","1.1.1.1"], a:1, why:"192.168.0.0/16 is private. Note 172's private range is only 172.16–172.31, so 172.32.x is public."},
+]},
+
+{ id:"identity", name:"🔑 SaaS & Identity", cards:[
+  {t:"SSO (Single Sign-On)", d:"Log in once with one identity and reach many apps without re-entering credentials each time."},
+  {t:"IdP (Identity Provider)", d:"The system that authenticates users and vouches for their identity to apps — e.g. Okta, Google, Microsoft Entra ID."},
+  {t:"SAML vs OIDC", d:"Two SSO protocols. SAML = XML-based, common in enterprise apps. OIDC (OpenID Connect) = JSON/OAuth2-based, common in modern web apps."},
+  {t:"MFA / 2FA", d:"Multi-factor auth: password (know) + authenticator/passkey (have) or biometric (are). Blocks the vast majority of account takeovers."},
+  {t:"SCIM / provisioning", d:"A standard that auto-creates, updates and deprovisions user accounts across SaaS apps from the IdP — the backbone of clean onboarding/offboarding."},
+  {t:"Offboarding", d:"On exit: disable the IdP/SSO account (kills downstream access), revoke sessions/tokens, reclaim and wipe the device, transfer data. Speed matters for security."},
+  {t:"Least privilege", d:"Give each user only the access their job needs — shrinking the blast radius if their account is compromised."},
+  {q:"Fastest way to cut ALL of a leaver's app access at once?", opts:["Email each SaaS vendor","Disable their account in the IdP (SSO)","Change the office Wi-Fi","Smash their laptop"], a:1, why:"Disabling the IdP account revokes SSO access across every connected app simultaneously."},
+  {q:"What does MFA mainly protect against?", opts:["Slow Wi-Fi","Account takeover using a stolen password","Disk failure","Overheating"], a:1, why:"Even with the password, an attacker lacks the second factor, so they can't get in."},
+  {q:"SCIM is used for…", opts:["Encrypting disks","Auto-provisioning and deprovisioning user accounts","Routing network packets","Casting to a TV"], a:1, why:"SCIM syncs the account lifecycle from the IdP out to your SaaS apps."},
+]},
+
+{ id:"av", name:"📺 AV & Rooms", cards:[
+  {t:"Zoom Rooms", d:"Dedicated room hardware + software (controller tablet, camera, mic, display) that gives one-tap join for meetings."},
+  {t:"HDMI vs USB-C", d:"HDMI carries video + audio to a display. USB-C can carry video (DisplayPort Alt Mode) + data + power over one cable, but often needs adapters."},
+  {t:"No audio in a room — first checks", d:"Right output device selected, not muted, volume up, cable seated, display on the correct HDMI/USB-C input, and the meeting app itself not muted."},
+  {t:"AV troubleshooting order", d:"Power → cable/connection → correct input source → device selected in the app → restart/update. Always work physical first, then logical."},
+  {t:"Wired vs wireless sharing", d:"Wireless (AirPlay, Zoom share) is convenient; wired (HDMI/USB-C) is most reliable for latency-sensitive demos."},
+  {q:"A presenter's laptop won't appear on the room display. Best FIRST check?", opts:["Reinstall macOS","Cable seated + correct input source on the display","Replace the display","Reboot the router"], a:1, why:"Start physical: is the cable actually in, and is the display set to the right HDMI/USB-C input?"},
+  {q:"Which single cable can carry video, data AND power together?", opts:["HDMI","USB-C","VGA","Ethernet"], a:1, why:"USB-C (with Alt Mode/Thunderbolt) can do video, data and power on one cable."},
+]},
+
+{ id:"bash", name:"⌨️ Bash", cards:[
+  {t:"Shebang (#!)", d:"The first line of a script picks the interpreter, e.g. #!/bin/bash or #!/usr/bin/env bash."},
+  {t:"Make a script executable", d:"chmod +x script.sh gives it execute permission; then run it with ./script.sh."},
+  {t:"Variables", d:"name=\"Sam\" (no spaces around =). Use it later as $name or ${name}."},
+  {t:"for loop", d:"for f in *.txt; do echo \"$f\"; done — iterate over a list of items."},
+  {t:"if statement", d:"if [ \"$x\" = \"yes\" ]; then ...; fi. The spaces inside [ ] are required."},
+  {t:"Pipes |", d:"Feed one command's output into the next: cat log | grep error | wc -l."},
+  {t:"grep", d:"Search text by pattern: grep -i \"error\" file.log (-i makes it case-insensitive)."},
+  {t:"Post to Slack from a script", d:"curl -X POST -H 'Content-type: application/json' --data '{\"text\":\"hi\"}' $SLACK_WEBHOOK_URL — the basis of a Slack alert bot."},
+  {q:"How do you make script.sh runnable?", opts:["run.sh script","chmod +x script.sh","exec script","sudo script.sh"], a:1, why:"chmod +x adds execute permission; then launch it with ./script.sh."},
+  {q:"What does cat log.txt | grep -i error | wc -l do?", opts:["Deletes error lines","Counts lines containing 'error' (any case)","Opens the file in an editor","Emails the log"], a:1, why:"grep -i filters case-insensitive 'error' lines and wc -l counts them."},
+  {q:"Which is the correct bash variable assignment?", opts:["name = \"Sam\"","$name = Sam","name=\"Sam\"","let name Sam"], a:2, why:"Bash needs no spaces around =, so name=\"Sam\" is correct."},
+]},
+
+{ id:"support", name:"🛠️ Support Skills", cards:[
+  {t:"Troubleshooting method", d:"1) Identify the problem 2) Establish a theory 3) Test the theory 4) Plan & implement the fix 5) Verify + prevent recurrence 6) Document."},
+  {t:"Reproduce first", d:"Confirm you can trigger the problem before fixing it — you can't verify a fix for something you can't reproduce."},
+  {t:"Change one thing at a time", d:"Isolate variables while testing so you actually know which change fixed it."},
+  {t:"Escalation", d:"Know when to hand off (scope, permissions, time). Escalate with context: what happened, what you tried, and the impact."},
+  {t:"SLA", d:"Service Level Agreement — target response/resolution times per ticket priority. It sets expectations for users."},
+  {t:"Empathy first", d:"Acknowledge the user's frustration and communicate clearly without jargon. This role explicitly wants a friendly, end-user focus."},
+  {t:"Documentation", d:"Write clear guides/runbooks so fixes are repeatable and users can self-serve — a core duty of this role."},
+  {q:"What's the first step of the standard troubleshooting method?", opts:["Reboot everything","Identify the problem","Replace the hardware","Escalate to the vendor"], a:1, why:"Step 1 is to identify the problem — gather info and reproduce it — before theorising."},
+  {q:"A user is angry their laptop is broken. Best opening move?", opts:["Explain the technical root cause in detail","Acknowledge the frustration and get them working again","Tell them to file a ticket and wait","Point out what they did wrong"], a:1, why:"Empathy plus restoring their work first. The role is explicitly end-user focused."},
+  {q:"You applied three fixes at once and it works. What's the problem?", opts:["Nothing","You don't know which fix actually worked","It was faster, so it's fine","You can skip documenting it"], a:1, why:"Change one thing at a time, or the real fix stays unknown and isn't repeatable."},
+]},
+
+];
+
+// ============ STATE ============
+const LS_KEY = "itPrepV1";
+const DAY = 86400000, MIN = 60000;
+// Steps on "got it", in MINUTES: a same-day 10-min step, then the day ladder.
+const SRS_STEPS = [10, 1 * 1440, 3 * 1440, 7 * 1440, 16 * 1440, 35 * 1440];
+let state = { deck: "elevenlabs", dir: "t2d", theme: null, hard: {}, sched: {} };
+try { Object.assign(state, JSON.parse(localStorage.getItem(LS_KEY) || "{}")); } catch(e) {}
+if (!state.sched) state.sched = {};
+function save() { localStorage.setItem(LS_KEY, JSON.stringify(state)); }
+
+const isDue = key => { const s = state.sched[key]; return !s || s.due <= Date.now(); };
+const isReviewDue = key => { const s = state.sched[key]; return s && s.due <= Date.now(); };
+function scheduleGot(key) {
+  const box = Math.min(((state.sched[key] && state.sched[key].box) || 0) + 1, SRS_STEPS.length);
+  state.sched[key] = { box, due: Date.now() + SRS_STEPS[box - 1] * MIN };
+}
+function scheduleAgain(key) { state.sched[key] = { box: 0, due: Date.now() }; }
+function nextDueAmong(keys) {
+  let m = Infinity;
+  for (const k of keys) { const s = state.sched[k]; if (s && s.due > Date.now() && s.due < m) m = s.due; }
+  return m === Infinity ? null : m;
+}
+function relTime(ms) {
+  const d = ms - Date.now();
+  if (d <= 0) return "now";
+  if (d < 3600000) return "in " + Math.max(1, Math.round(d / 60000)) + " min";
+  if (d < DAY) return "in " + Math.round(d / 3600000) + " h";
+  const days = Math.round(d / DAY);
+  return days === 1 ? "tomorrow" : "in " + days + " days";
+}
+
+const $ = id => document.getElementById(id);
+const cardId = c => c.q || c.t;
+const isQuiz = c => Array.isArray(c.opts);
+function currentDeck() { return DECKS.find(d => d.id === state.deck) || DECKS[0]; }
+
+function candidateCards() {
+  if (state.deck === "__hard") {
+    const out = [];
+    DECKS.forEach(d => d.cards.forEach(c => {
+      const k = d.id + "|" + cardId(c);
+      if (state.hard[k]) out.push({ ...c, _deck: d.name, _key: k });
+    }));
+    return out;
+  }
+  if (state.deck === "__due") {
+    const out = [];
+    DECKS.forEach(d => d.cards.forEach(c => out.push({ ...c, _deck: d.name, _key: d.id + "|" + cardId(c) })));
+    return out;
+  }
+  const d = currentDeck();
+  return d.cards.map(c => ({ ...c, _deck: d.name, _key: d.id + "|" + cardId(c) }));
+}
+
+let order = [], idx = 0, flipped = false, answered = false, chosen = -1;
+
+function buildOrder(shuffle) {
+  order = state.deck === "__due"
+    ? candidateCards().filter(c => isReviewDue(c._key))
+    : candidateCards();
+  order.sort((a, b) =>
+    ((state.sched[a._key] && state.sched[a._key].due) || 0) -
+    ((state.sched[b._key] && state.sched[b._key].due) || 0));
+  if (shuffle) {
+    for (let i = order.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [order[i], order[j]] = [order[j], order[i]];
+    }
+  }
+  idx = 0; resetCardState();
+}
+function resetCardState() { flipped = false; answered = false; chosen = -1; }
+
+function esc(s) { return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;"); }
+
+function render() {
+  const bar = $("deckBar");
+  bar.innerHTML = "";
+  DECKS.forEach(d => {
+    const b = document.createElement("button");
+    b.className = "deck-chip" + (state.deck === d.id ? " active" : "");
+    b.textContent = d.name;
+    b.onclick = () => { state.deck = d.id; save(); buildOrder(false); render(); };
+    bar.appendChild(b);
+  });
+  let dueCount = 0;
+  DECKS.forEach(d => d.cards.forEach(c => { if (isReviewDue(d.id + "|" + cardId(c))) dueCount++; }));
+  const db = document.createElement("button");
+  db.className = "deck-chip" + (state.deck === "__due" ? " active" : "");
+  db.textContent = "⏰ Due (" + dueCount + ")";
+  db.onclick = () => { state.deck = "__due"; save(); buildOrder(false); render(); };
+  bar.appendChild(db);
+  const hardCount = Object.keys(state.hard).filter(k => state.hard[k]).length;
+  const hb = document.createElement("button");
+  hb.className = "deck-chip" + (state.deck === "__hard" ? " active" : "");
+  hb.textContent = "★ Hard (" + hardCount + ")";
+  hb.onclick = () => { state.deck = "__hard"; save(); buildOrder(false); render(); };
+  bar.appendChild(hb);
+
+  $("dirBtn").textContent = state.dir === "t2d" ? "Term → Def" : "Def → Term";
+
+  const card = order[idx];
+  const cardEl = $("card"), body = $("cardBody");
+
+  if (!card) {
+    $("deckLabel").textContent = "";
+    $("kindTag").style.display = "none";
+    $("starBtn").style.display = "none";
+    $("gradeRow").style.visibility = "hidden";
+    $("counter").textContent = "";
+    let msg;
+    if (state.deck === "__hard") msg = "No hard cards yet.<small>Tap ★ on any card to collect the tricky ones here.</small>";
+    else if (state.deck === "__due") msg = "🎉 Nothing due right now.<small>Reviews come back on schedule — open a deck to learn new cards.</small>";
+    else {
+      const nxt = nextDueAmong(candidateCards().map(c => c._key));
+      msg = "🎉 All caught up here.<small>" + (nxt ? "Next card comes back " + relTime(nxt) + "." : "Star cards or try another deck.") + "</small>";
+    }
+    body.innerHTML = '<div class="empty">' + msg + '</div>';
+    return;
+  }
+
+  $("starBtn").style.display = "";
+  $("starBtn").className = "star" + (state.hard[card._key] ? " on" : "");
+  $("deckLabel").textContent = card._deck;
+  const quiz = isQuiz(card);
+  $("kindTag").style.display = "";
+  $("kindTag").textContent = quiz ? "quiz" : "concept";
+  cardEl.className = "card " + (quiz ? "quiz" : "concept");
+  $("counter").textContent = (idx + 1) + " / " + order.length + (state.deck === "__due" ? " due" : "");
+
+  if (quiz) {
+    $("gradeRow").style.visibility = "hidden";
+    let html = '<div class="qwrap"><div class="question">' + esc(card.q) + '</div><div class="opts">';
+    card.opts.forEach((o, i) => {
+      let cls = "opt";
+      if (answered) {
+        cls += " disabled";
+        if (i === card.a) cls += " correct";
+        else if (i === chosen) cls += " wrong";
+      }
+      html += '<button class="' + cls + '" data-i="' + i + '"><span class="key">' +
+        "ABCD"[i] + '</span><span>' + esc(o) + '</span></button>';
+    });
+    html += '</div>';
+    if (answered) {
+      html += '<div class="why"><b>' + (chosen === card.a ? "Correct." : "Not quite.") + '</b> ' + esc(card.why) + '</div>';
+      html += '<button class="continue" id="continueBtn">Continue →</button>';
+    }
+    html += '</div>';
+    body.innerHTML = html;
+    if (!answered) {
+      body.querySelectorAll(".opt").forEach(btn =>
+        btn.onclick = () => answerQuiz(parseInt(btn.getAttribute("data-i"), 10)));
+    } else {
+      $("continueBtn").onclick = () => { advance(chosen === card.a); };
+    }
+    return;
+  }
+
+  // concept card
+  const front = state.dir === "t2d" ? card.t : card.d;
+  const back = state.dir === "t2d" ? card.d : card.t;
+  if (!flipped) {
+    body.innerHTML = '<div class="' + (state.dir === "t2d" ? "term" : "prompt") + '">' +
+      esc(front) + '</div><div class="hint">tap or press Space to flip</div>';
+    $("gradeRow").style.visibility = "hidden";
+  } else {
+    body.innerHTML = '<div class="answer-term">' + esc(card.t) + '</div><div class="def">' + esc(card.d) + '</div>';
+    $("gradeRow").style.visibility = "visible";
+  }
+}
+
+function answerQuiz(i) {
+  const card = order[idx];
+  if (!card || answered) return;
+  answered = true; chosen = i;
+  if (i === card.a) scheduleGot(card._key); else scheduleAgain(card._key);
+  save(); render();
+}
+
+function advance(got) {
+  if (state.deck === "__due") {
+    if (got) { order.splice(idx, 1); if (idx >= order.length) idx = 0; }
+    else {
+      const c = order.splice(idx, 1)[0];
+      order.splice(Math.min(idx + 4, order.length), 0, c);
+      idx = idx % Math.max(order.length, 1);
+    }
+  } else if (order.length) {
+    idx = (idx + 1) % order.length;
+  }
+  resetCardState(); render();
+}
+
+function grade(got) {
+  const card = order[idx];
+  if (!card || isQuiz(card)) return;
+  if (got) scheduleGot(card._key); else scheduleAgain(card._key);
+  save(); advance(got);
+}
+
+function flip() {
+  const card = order[idx];
+  if (!card || isQuiz(card)) return;
+  flipped = !flipped; render();
+}
+function move(n) {
+  if (!order.length) return;
+  idx = (idx + n + order.length) % order.length;
+  resetCardState(); render();
+}
+
+$("card").onclick = e => { if (e.target.closest("#starBtn") || e.target.closest(".opt") || e.target.closest("#continueBtn")) return; flip(); };
+$("starBtn").onclick = e => {
+  e.stopPropagation();
+  const card = order[idx]; if (!card) return;
+  if (state.hard[card._key]) delete state.hard[card._key]; else state.hard[card._key] = 1;
+  save(); render();
+};
+$("againBtn").onclick = () => grade(false);
+$("gotBtn").onclick = () => grade(true);
+$("nextBtn").onclick = () => move(1);
+$("prevBtn").onclick = () => move(-1);
+$("shuffleBtn").onclick = () => { buildOrder(true); render(); };
+$("resetBtn").onclick = () => { candidateCards().forEach(c => delete state.sched[c._key]); save(); buildOrder(false); render(); };
+$("dirBtn").onclick = () => { state.dir = state.dir === "t2d" ? "d2t" : "t2d"; resetCardState(); save(); render(); };
+
+function applyTheme() {
+  const t = state.theme || (matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+  document.documentElement.setAttribute("data-theme", t);
+}
+$("themeBtn").onclick = () => {
+  const cur = document.documentElement.getAttribute("data-theme");
+  state.theme = cur === "dark" ? "light" : "dark"; save(); applyTheme();
+};
+
+document.addEventListener("keydown", e => {
+  const card = order[idx];
+  if (e.code === "Space") { e.preventDefault(); flip(); }
+  else if (e.key === "1" && flipped) grade(false);
+  else if (e.key === "2" && flipped) grade(true);
+  else if (e.key === "ArrowRight") move(1);
+  else if (e.key === "ArrowLeft") move(-1);
+  else if (card && isQuiz(card) && !answered && "1234".includes(e.key)) answerQuiz(parseInt(e.key, 10) - 1);
+});
+
+applyTheme();
+if (!DECKS.some(d => d.id === state.deck) && !["__hard", "__due"].includes(state.deck)) state.deck = "elevenlabs";
+buildOrder(false);
+render();
+</script>
+</body>
+</html>
