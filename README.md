@@ -1,6 +1,6 @@
 # IT Support Prep — ElevenLabs TechSupport Engineer
 
-Day-1 study app for the **ElevenLabs TechSupport Engineer (London)** role. Concepts pulled straight from the job description, with spaced repetition and auto-graded quizzes. Runs offline, saves per device.
+Study app for the **ElevenLabs TechSupport Engineer (London)** role, covering the full 7-day prep cheat sheet — macOS, wipe/rebuild, MDM & identity, networking, the Slack bot project, bash, AV, security, and interview answers. Concepts pulled straight from the job description, with spaced repetition and auto-graded quizzes. Runs offline, saves per device.
 
 ## How to use
 
@@ -9,6 +9,7 @@ Open [index.html](index.html) in any browser — double-click it. No internet ne
 - **Two card types.** *Concept* cards (term ↔ definition) you flip and self-grade. *Quiz* cards (multiple choice) grade themselves — pick an answer, see if you're right plus a one-line why.
 - **Spaced repetition.** Both card types feed one schedule. Mark/answer **got it** and the card returns on a widening ladder — **10 min → 1 day → 3 → 7 → 16 → 35 days**. Miss it and it resets to the start. The 10-minute first step means cards come back within your session.
 - **⏰ Due** is the daily driver: every card that's come back due across all decks, drained as you clear it. Any other deck is free browsing.
+- **❓ Quiz** drills every multiple-choice question across all decks, shuffled — the evening-quiz mode, not schedule-gated.
 - **★ Hard** collects the ones you keep missing — tap the star on any card.
 - Keys: **Space** flip · **1** didn't know · **2** got it · **1–4** answer a quiz · **← →** move.
 - **Term → Def** button flips concept cards to test recall (name the term from its definition) instead of recognition.
@@ -21,12 +22,15 @@ Open [index.html](index.html) in any browser — double-click it. No internet ne
 | 🎧 ElevenLabs | What the company does (Agents/Creative/API), culture, the role itself — interview prep |
 | 🍎 macOS | System Settings vs Utilities, least privilege, Gatekeeper, FileVault, Keychain, Activity Monitor, Console, Terminal commands, Recovery/Safe Mode, APFS containers & volumes |
 | 💿 Wipe & Rebuild | Clean install on a Lab volume, the secure-token gotcha, EACAS vs Recovery erase, Activation Lock |
-| 💻 MDM & Devices | MDM, Apple Business Manager, zero-touch/ADE, supervised devices, remote wipe, lifecycle |
-| 🌐 Networking | IP/DNS/DHCP, gateway, subnet, VPN, Wi-Fi bands, ports, TCP vs UDP, ping/traceroute |
-| 🔑 SaaS & Identity | SSO, IdP, SAML/OIDC, MFA, SCIM, offboarding, least privilege |
-| 📺 AV & Rooms | Zoom Rooms, HDMI vs USB-C, room audio/video troubleshooting order |
-| ⌨️ Bash | Shebang, chmod, variables, loops, pipes, grep, posting to Slack (the bonus skill) |
+| 💻 MDM & Devices | MDM, Apple Business Manager, zero-touch/ADE, supervised devices, remote wipe, lifecycle, the Jamf/Kandji/Mosyle/Intune one-liners, VPP, Managed Apple IDs |
+| 🌐 Networking | IP/DNS/DHCP, NAT, gateway, subnet, VPN, firewall, HTTP/HTTPS, Wi-Fi bands & failure modes, the DNS ping trick, ping/traceroute/nslookup |
+| 🔑 SaaS & Identity | SSO, IdP, SAML/OIDC, OAuth, MFA, SCIM, the identity→ABM→MDM→SSO stack, joiner/leaver flows, offboarding |
+| 📺 AV & Rooms | Room anatomy, Zoom Rooms, HDMI vs USB-C, "fastest workaround first" triage, troubleshooting order |
+| ⌨️ Bash | Shebang, chmod, variables, loops, pipes, grep, posting to Slack, Homebrew, the health-check & new-laptop setup scripts |
 | 🛠️ Support Skills | Troubleshooting method, escalation, SLAs, empathy, documentation |
+| 🤖 Slack Bot | API vs webhook, JSON, slash commands, the /it-help bot architecture, hosting, verification numbers (the flagship project) |
+| 🔒 Security & Assets | Phishing, password managers, disk encryption, the lost-laptop chain, ticket prioritisation, asset lifecycle, Windows crossover |
+| 🎤 Interview & Stories | The framework recital, the "why ElevenLabs" answer, STAR story prompts, the 4 questions to ask them, gap-recovery lines |
 
 ## Live site
 

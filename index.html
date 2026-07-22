@@ -146,6 +146,7 @@
 <footer>
   Space = flip · 1 = didn't know · 2 = got it · ← → move · ★ = hard deck.
   Concept cards you self-grade; quiz cards grade themselves. Both feed the ⏰ Due schedule.
+  ❓ Quiz drills every multiple-choice question across all decks, shuffled.
 </footer>
 
 <script>
@@ -230,9 +231,19 @@ const DECKS = [
   {t:"Configuration profile", d:"A signed settings file pushed by MDM to configure Wi-Fi, VPN, certificates, restrictions and more."},
   {t:"Secure wipe / cryptographic erase", d:"Remotely erasing a device at end of life or on loss. Modern Macs destroy the FileVault keys, making data instantly unrecoverable."},
   {t:"Device lifecycle", d:"Procure → enroll/setup → assign → support → return → wipe → reissue or retire. TechSupport owns this end to end."},
+  {t:"Jamf Pro (MDM one-liner)", d:"Powerful, script-heavy, the enterprise standard for managing Apple at scale. Most control, most setup."},
+  {t:"Kandji (MDM one-liner)", d:"Automation-first with pre-built compliance templates — ideal for lean teams that want less manual work."},
+  {t:"Mosyle (MDM one-liner)", d:"Cheap, simple, good value — a common pick for small/startup Apple fleets."},
+  {t:"Intune (MDM one-liner)", d:"Microsoft's MDM — the Windows world's default (manages Macs too). If they say 'Intune', think Microsoft-centric shop."},
+  {t:"Why an Apple startup picks Kandji/Jamf", d:"Deep native Apple support, strong automation, and built-in compliance templates — less manual work for a small IT team. Good answer to 'which MDM would you choose?'"},
+  {t:"VPP (Volume Purchase Program)", d:"Buy and assign app licenses in bulk through Apple Business Manager, then push them silently via MDM — no per-device App Store logins."},
+  {t:"Managed Apple ID", d:"An Apple ID created and controlled by the organisation (via ABM). Keeps business data separate from the employee's personal Apple ID."},
+  {t:"MDM does six things", d:"Enrollment · configuration profiles · app deployment · remote lock/wipe · compliance monitoring (FileVault on? OS current?) · inventory (who has what)."},
   {q:"What is 'zero-touch' deployment?", opts:["Manually imaging every laptop","A device auto-enrolls in MDM on first boot via ABM/ADE","Shipping laptops with no OS","Letting users install their own OS"], a:1, why:"Company devices registered in ABM auto-enroll into MDM on first boot — no hands-on imaging."},
   {q:"An employee leaves and their MacBook is lost. Best action?", opts:["Nothing — it's encrypted","Remote lock/wipe via MDM","Email them to post it back","Change the office Wi-Fi password"], a:1, why:"Use MDM to remote lock/wipe; cryptographic erase makes the FileVault data unrecoverable."},
   {q:"Which of these are examples of MDM tools?", opts:["Jamf and Kandji","Slack and Zoom","Chrome and Safari","Word and Excel"], a:0, why:"Jamf and Kandji are Apple-focused MDMs (Intune is the cross-platform Microsoft one)."},
+  {q:"An interviewer asks which MDM you'd pick for a small Apple-heavy startup. Strong answer?", opts:["Intune — it's Microsoft","Kandji or Jamf — native Apple support + automation + built-in compliance","Whatever's cheapest","None, image them by hand"], a:1, why:"Native Apple depth, automation and compliance templates mean less manual work for a lean team."},
+  {q:"Someone says their environment runs on Intune. What does that tell you?", opts:["They're Apple-only","It's a Microsoft-centric shop (Intune also manages Macs)","They have no MDM","They use Jamf underneath"], a:1, why:"Intune is Microsoft's MDM — the Windows world's default, though it manages Macs too."},
 ]},
 
 { id:"net", name:"🌐 Networking", cards:[
@@ -243,12 +254,21 @@ const DECKS = [
   {t:"Subnet mask", d:"Defines which part of an IP is the network and which is the host (255.255.255.0 = /24). Decides what counts as 'local'."},
   {t:"VPN", d:"Virtual Private Network — an encrypted tunnel over the internet so a remote device behaves as if it's on the private/office network."},
   {t:"2.4 GHz vs 5 GHz Wi-Fi", d:"2.4 GHz = longer range but slower and more congested. 5 GHz = faster but shorter range and less interference."},
-  {t:"ping / traceroute", d:"ping tests reachability and latency to a host. traceroute shows the hop-by-hop path packets take to get there."},
+  {t:"NAT", d:"Network Address Translation — maps many private internal IPs onto one public IP so a whole office can share a single internet address."},
+  {t:"Firewall", d:"Filters network traffic by rules (allow/block) — by port, address or app. macOS has a built-in one in Privacy & Security."},
+  {t:"HTTP vs HTTPS", d:"HTTPS is encrypted with TLS (padlock, port 443); HTTP is plaintext (port 80). 'Not secure' warnings mean plain HTTP."},
+  {t:"⭐ The DNS ping trick", d:"ping 8.8.8.8 works but ping google.com fails = DNS problem. Raw IP reachable but names don't resolve → it's name resolution, not connectivity. Know this instantly."},
+  {t:"nslookup / ifconfig", d:"nslookup google.com queries DNS directly (is resolution working?). ifconfig shows your local interface config — IP, subnet, whether you even got an address."},
+  {t:"The hotspot isolation move", d:"'Does it work on your phone hotspot?' instantly separates a NETWORK problem (office Wi-Fi) from a DEVICE problem (the laptop). The fastest single diagnostic."},
+  {t:"Wi-Fi failure modes", d:"Weak signal (far/walls → drops). Congestion (peak-time slowness). DNS ('connected but nothing loads'). Captive portal (hotel/café login page not completing)."},
+  {t:"ping / traceroute", d:"ping tests reachability and latency to a host. traceroute shows the hop-by-hop path packets take — and where it breaks."},
   {t:"TCP vs UDP", d:"TCP = reliable, ordered, connection-based (web, email). UDP = fast, connectionless, best-effort (voice, video, DNS)."},
   {q:"A user can reach websites by IP but not by name. Most likely cause?", opts:["Broken monitor","A DNS problem","Dead battery","Wrong keyboard layout"], a:1, why:"Names failing while raw IPs work points straight at DNS resolution."},
   {q:"What does DHCP do?", opts:["Encrypts traffic","Auto-assigns IP settings to devices","Blocks ports","Resolves names to IP addresses"], a:1, why:"DHCP auto-assigns IP, subnet, gateway and DNS. (Name → IP is DNS's job.)"},
   {q:"Which port is HTTPS?", opts:["80","22","443","53"], a:2, why:"443 = HTTPS. 80 = HTTP, 22 = SSH, 53 = DNS."},
   {q:"Which of these is a private IP address?", opts:["8.8.8.8","192.168.1.10","172.32.5.4","1.1.1.1"], a:1, why:"192.168.0.0/16 is private. Note 172's private range is only 172.16–172.31, so 172.32.x is public."},
+  {q:"A user is 'connected' to Wi-Fi at a café but no pages load and nothing's obviously wrong. Likely cause?", opts:["Dead battery","An unfinished captive-portal login page","Broken DNS on 8.8.8.8","A firewall on their laptop"], a:1, why:"Café/hotel Wi-Fi often needs you to accept a login page first; until you do, you're connected but blocked."},
+  {q:"What does NAT do?", opts:["Encrypts web traffic","Maps many private IPs onto one public IP","Resolves names to IPs","Assigns IP addresses"], a:1, why:"NAT lets a whole private network share a single public internet address."},
 ]},
 
 { id:"identity", name:"🔑 SaaS & Identity", cards:[
@@ -256,15 +276,24 @@ const DECKS = [
   {t:"IdP (Identity Provider)", d:"The system that authenticates users and vouches for their identity to apps — e.g. Okta, Google, Microsoft Entra ID."},
   {t:"SAML vs OIDC", d:"Two SSO protocols. SAML = XML-based, common in enterprise apps. OIDC (OpenID Connect) = JSON/OAuth2-based, common in modern web apps."},
   {t:"MFA / 2FA", d:"Multi-factor auth: password (know) + authenticator/passkey (have) or biometric (are). Blocks the vast majority of account takeovers."},
+  {t:"OAuth", d:"An authorization protocol: it grants an app limited access to your account WITHOUT sharing your password (the 'Sign in with Google, allow access?' flow). Auth-orization, not authentic-ation."},
   {t:"SCIM / provisioning", d:"A standard that auto-creates, updates and deprovisions user accounts across SaaS apps from the IdP — the backbone of clean onboarding/offboarding."},
+  {t:"⭐ The identity → device → SSO stack", d:"The IdP is the source of truth → the Mac enrolls via Apple Business Manager into the MDM → apps and policies land automatically → SaaS access via SSO. Offboarding is the reverse: suspend the identity, revoke sessions, remote wipe the device. Say this until smooth."},
+  {t:"Joiner flow (onboarding)", d:"Create identity → add to groups → device auto-enrolls (zero-touch) → apps/policies apply → SSO into SaaS → first-day call. This is Runbook #2."},
+  {t:"Leaver flow (offboarding)", d:"Suspend identity → revoke active sessions → remote wipe device → reclaim licenses → transfer data → update the asset register. The reverse of onboarding."},
   {t:"Offboarding", d:"On exit: disable the IdP/SSO account (kills downstream access), revoke sessions/tokens, reclaim and wipe the device, transfer data. Speed matters for security."},
   {t:"Least privilege", d:"Give each user only the access their job needs — shrinking the blast radius if their account is compromised."},
   {q:"Fastest way to cut ALL of a leaver's app access at once?", opts:["Email each SaaS vendor","Disable their account in the IdP (SSO)","Change the office Wi-Fi","Smash their laptop"], a:1, why:"Disabling the IdP account revokes SSO access across every connected app simultaneously."},
   {q:"What does MFA mainly protect against?", opts:["Slow Wi-Fi","Account takeover using a stolen password","Disk failure","Overheating"], a:1, why:"Even with the password, an attacker lacks the second factor, so they can't get in."},
   {q:"SCIM is used for…", opts:["Encrypting disks","Auto-provisioning and deprovisioning user accounts","Routing network packets","Casting to a TV"], a:1, why:"SCIM syncs the account lifecycle from the IdP out to your SaaS apps."},
+  {q:"What's the correct order of the identity/device stack?", opts:["MDM → IdP → ABM → SSO","IdP (source of truth) → ABM → MDM → SSO","SSO → MDM → IdP → ABM","ABM → SSO → IdP → MDM"], a:1, why:"Identity is the source of truth; the device enrolls via ABM into MDM; SaaS access is via SSO. Offboarding runs it in reverse."},
+  {q:"OAuth's main job is…", opts:["Encrypting the disk","Granting an app limited access without sharing your password","Assigning IP addresses","Backing up files"], a:1, why:"OAuth is authorization — 'allow this app limited access' — not password sharing."},
 ]},
 
 { id:"av", name:"📺 AV & Rooms", cards:[
+  {t:"Meeting-room anatomy", d:"A small computer + a camera + a mic/speaker bar + a touch controller, all wired to a display. Most 'room' faults are one of those four or a cable between them."},
+  {t:"⭐ AV triage mindset", d:"Fastest workaround FIRST — get the meeting happening (join from a laptop), then root-cause after. When the CEO's all-hands is in 5 minutes, a working laptop beats a perfect diagnosis."},
+  {t:"Classic AV failures", d:"HDMI/USB-C handshake, wrong audio input selected, controller offline, or simply a loose cable. 'It's the cable ~60% of the time.'"},
   {t:"Zoom Rooms", d:"Dedicated room hardware + software (controller tablet, camera, mic, display) that gives one-tap join for meetings."},
   {t:"HDMI vs USB-C", d:"HDMI carries video + audio to a display. USB-C can carry video (DisplayPort Alt Mode) + data + power over one cable, but often needs adapters."},
   {t:"No audio in a room — first checks", d:"Right output device selected, not muted, volume up, cable seated, display on the correct HDMI/USB-C input, and the meeting app itself not muted."},
@@ -272,6 +301,7 @@ const DECKS = [
   {t:"Wired vs wireless sharing", d:"Wireless (AirPlay, Zoom share) is convenient; wired (HDMI/USB-C) is most reliable for latency-sensitive demos."},
   {q:"A presenter's laptop won't appear on the room display. Best FIRST check?", opts:["Reinstall macOS","Cable seated + correct input source on the display","Replace the display","Reboot the router"], a:1, why:"Start physical: is the cable actually in, and is the display set to the right HDMI/USB-C input?"},
   {q:"Which single cable can carry video, data AND power together?", opts:["HDMI","USB-C","VGA","Ethernet"], a:1, why:"USB-C (with Alt Mode/Thunderbolt) can do video, data and power on one cable."},
+  {q:"The CEO's display won't connect 5 minutes before all-hands. Best move?", opts:["Start diagnosing the HDMI handshake","Get them presenting off a laptop now, root-cause after","Reboot the room computer and wait","Reschedule the meeting"], a:1, why:"Fastest workaround first — make the meeting happen, then fix the root cause once the pressure's off."},
 ]},
 
 { id:"bash", name:"⌨️ Bash", cards:[
@@ -283,6 +313,9 @@ const DECKS = [
   {t:"Pipes |", d:"Feed one command's output into the next: cat log | grep error | wc -l."},
   {t:"grep", d:"Search text by pattern: grep -i \"error\" file.log (-i makes it case-insensitive)."},
   {t:"Post to Slack from a script", d:"curl -X POST -H 'Content-type: application/json' --data '{\"text\":\"hi\"}' $SLACK_WEBHOOK_URL — the basis of a Slack alert bot."},
+  {t:"Homebrew", d:"The macOS package manager. brew install slack zoom google-chrome 1password sets up a new laptop's apps from one script — the heart of a setup script."},
+  {t:"Script 1 — Mac health-check", d:"Reports disk space (df -h), FileVault (fdesetup status), macOS version (sw_vers), uptime, and pending updates (softwareupdate --list). A scriptable version of 'is this Mac healthy?'"},
+  {t:"Script 2 — New-laptop setup", d:"Installs Homebrew if missing → brew install's the standard apps (Slack, Zoom, Chrome, 1Password) → sets a couple of defaults. Test it on the Lab volume — exactly what it's for."},
   {q:"How do you make script.sh runnable?", opts:["run.sh script","chmod +x script.sh","exec script","sudo script.sh"], a:1, why:"chmod +x adds execute permission; then launch it with ./script.sh."},
   {q:"What does cat log.txt | grep -i error | wc -l do?", opts:["Deletes error lines","Counts lines containing 'error' (any case)","Opens the file in an editor","Emails the log"], a:1, why:"grep -i filters case-insensitive 'error' lines and wc -l counts them."},
   {q:"Which is the correct bash variable assignment?", opts:["name = \"Sam\"","$name = Sam","name=\"Sam\"","let name Sam"], a:2, why:"Bash needs no spaces around =, so name=\"Sam\" is correct."},
@@ -299,6 +332,55 @@ const DECKS = [
   {q:"What's the first step of the standard troubleshooting method?", opts:["Reboot everything","Identify the problem","Replace the hardware","Escalate to the vendor"], a:1, why:"Step 1 is to identify the problem — gather info and reproduce it — before theorising."},
   {q:"A user is angry their laptop is broken. Best opening move?", opts:["Explain the technical root cause in detail","Acknowledge the frustration and get them working again","Tell them to file a ticket and wait","Point out what they did wrong"], a:1, why:"Empathy plus restoring their work first. The role is explicitly end-user focused."},
   {q:"You applied three fixes at once and it works. What's the problem?", opts:["Nothing","You don't know which fix actually worked","It was faster, so it's fine","You can skip documenting it"], a:1, why:"Change one thing at a time, or the real fix stays unknown and isn't repeatable."},
+]},
+
+{ id:"bot", name:"🤖 Slack Bot", cards:[
+  {t:"API", d:"A defined way for two programs to talk: send a request, get a structured response back. The bot calls Slack's API to post messages."},
+  {t:"Webhook", d:"The reverse of an API call: a URL that RECEIVES pushed data when an event happens. Slack POSTs to your webhook when someone runs the command — event-driven callback."},
+  {t:"API vs Webhook (know cold)", d:"API = you ask (pull). Webhook = it tells you (push). You POST to an incoming webhook to put a message INTO Slack; Slack POSTs to your endpoint when an event happens."},
+  {t:"JSON", d:"A lightweight, human-readable data format of key–value pairs, e.g. {\"text\":\"hi\"}. The language APIs and webhooks speak."},
+  {t:"Slash command", d:"A trigger like /it-help that fires your bot from any Slack channel and sends the form fields to your endpoint."},
+  {t:"Incoming webhook", d:"A Slack-provided URL you POST to in order to post a message into a specific channel — how the bot drops a ticket into #it-requests."},
+  {t:"Workflow Builder", d:"Slack's no-code automation. The fallback: if hosting/OAuth fights you, build the form + routing here instead of a hosted server."},
+  {t:"⭐ The bot architecture", d:"/it-help → Slack sends the request to your server/endpoint → server reads the form fields → posts a ticket to #it-requests (or a Google Sheet) → fires an auto-reply with a matching how-to snippet. Know this end to end — you WILL be asked."},
+  {t:"Locked scope", d:"/it-help opens a form (issue type + urgency + description) → posts to #it-requests or a Sheet → auto-replies with a matching how-to. Don't expand it."},
+  {t:"Hosting", d:"Simplest that works: Render / Replit / Cloudflare Workers free tier — or Workflow Builder + webhook if hosting fights you. Stuck 2+ hours on hosting/OAuth? Downgrade scope, don't abandon."},
+  {t:"⭐ Verification (the 'how did you know it worked?' answer)", d:"Test against the 5 most common request types, confirm each routes correctly, write concrete numbers: 'request → logged ticket + auto-reply in under 10 seconds, zero manual steps, 5/5 types route correctly.'"},
+  {q:"What's the difference between an API call and a webhook?", opts:["No difference","API = you request (pull); webhook = it pushes data to you on an event","Webhooks are only for email","APIs can't return data"], a:1, why:"You POST to an incoming webhook to send INTO Slack; Slack POSTs to your endpoint when an event fires."},
+  {q:"In the /it-help bot, what triggers the flow?", opts:["A cron job","The user running the /it-help slash command","A nightly script","An email"], a:1, why:"The slash command fires the bot and hands your endpoint the form fields."},
+  {q:"You're 2+ hours stuck on hosting/OAuth for the bot. Best move?", opts:["Abandon the project","Downgrade scope — use Workflow Builder + a webhook","Keep grinding all day","Switch languages entirely"], a:1, why:"Ship something: Workflow Builder + webhook gets a working demo without the hosting fight."},
+]},
+
+{ id:"security", name:"🔒 Security & Assets", cards:[
+  {t:"Phishing", d:"Deceptive messages that trick you into giving up credentials. Verify the sender, don't click, report it. The #1 way accounts get breached."},
+  {t:"Password managers", d:"Generate and store unique strong passwords (1Password etc.) so one leaked site can't unlock the rest. Standard issue for the whole company."},
+  {t:"Disk encryption", d:"FileVault (Mac) / BitLocker (Windows). A lost device = unreadable data. Pairs with MDM key escrow so IT can still recover it."},
+  {t:"⭐ Lost-laptop chain", d:"Report → remote lock (MDM) → assess risk → remote wipe → revoke sessions in the IdP → replace → update the asset register. This is Runbook #4."},
+  {t:"Least privilege", d:"Give each user only the access their job needs — smaller blast radius if an account is compromised. Most users = standard, not admin."},
+  {t:"Same-day offboarding", d:"Kill access the moment someone leaves — suspend the IdP account and revoke sessions the same day. A dormant active account is a live risk."},
+  {t:"Ticket prioritisation", d:"Priority = impact × urgency. One exec blocked before a board meeting can outrank a mild annoyance affecting many. Tools: Jira Service Management, Freshservice, Slack-native IT."},
+  {t:"Asset lifecycle", d:"Approval → order via ABM-linked reseller → auto-enrolls → asset register (serial, owner, status) → return → wipe → reassign/repair. 'Even a spreadsheet register beats nothing; I'd auto-update it from the MDM device list.'"},
+  {t:"Windows crossover", d:"Task Manager = Activity Monitor · Windows Update = Software Update · BitLocker = FileVault · Intune = the MDM. 'Same framework, different menu names.'"},
+  {q:"A laptop is reported lost. What's the correct chain?", opts:["Wait to see if it turns up","Report → remote lock → assess → remote wipe → revoke sessions → replace","Just change the Wi-Fi password","Remote wipe immediately, nothing else"], a:1, why:"Lock first to contain, then assess, wipe, and cut the account's sessions in the IdP."},
+  {q:"How should tickets be prioritised?", opts:["First come, first served","Impact × urgency","By who shouts loudest","Alphabetically"], a:1, why:"Weigh how many are affected and how time-critical it is — an exec blocked before a board meeting can jump the queue."},
+  {q:"On Windows, what's the equivalent of FileVault?", opts:["Defender","BitLocker","Task Manager","Registry"], a:1, why:"BitLocker is Windows full-disk encryption — same idea, different name. 'Same framework, different menus.'"},
+]},
+
+{ id:"interview", name:"🎤 Interview & Stories", cards:[
+  {t:"⭐ Recite the framework in <15s", d:"clarify scope & impact → reproduce → isolate (device/network/app) → simplest hypothesis first → fix → verify → document → communicate throughout. Add the human side: 'here's what I'm checking, here's your workaround meanwhile.'"},
+  {t:"'Why ElevenLabs, and why you?'", d:"Half 1: ONE specific thing from immersion (a product moment or blog post) — never 'you're a leader in AI voice'. Half 2: 'I prepped by doing the job — enrolled a Mac in MDM, built a Slack IT-helpdesk bot, wrote four runbooks, all AI-pair-programmed, which I understand is how you work.'"},
+  {t:"'Most impactful thing you've built?'", d:"The Slack bot. One line on what it does → 'I scoped, built and shipped it solo, pair-programming with AI — I made the design decisions, AI accelerated the code.' Solo + AI is a feature here, not a weakness."},
+  {t:"'How did you know it worked?'", d:"The bot's verification numbers + the demo GIF. Concrete: 'request → ticket + auto-reply in under 10 seconds, 5/5 types route correctly.' Never 'it worked great.'"},
+  {t:"'Have you used ElevenLabs?'", d:"Your API mini-project verbatim: what you built, one thing you loved, one honest friction point. The friction proves real usage."},
+  {t:"The wipe question", d:"'I've done full clean macOS installs and rebuilds on a separate volume, and I know the Erase All Content and Settings flow cold — I just wasn't going to wipe my only machine mid-prep.'"},
+  {t:"Gap-recovery line", d:"'I haven't used Jamf specifically, but I enrolled and managed my own Mac in Mosyle this month — the concepts transfer.' Honest + shows the transferable skill."},
+  {t:"The opening move", d:"'I actually built a small version of that — can I share my screen for 30 seconds?' Turns a question into a demo."},
+  {t:"6 STAR stories to prep", d:"(1) Frustrated/non-technical person turned around (2) Taught yourself fast (3) Ownership nobody asked for (4) Organized under chaos (5) Something broke at the worst moment (6) A mistake + what changed. Situation → Action → Result, 60–90s each."},
+  {t:"⭐ 4 questions to ask THEM", d:"What's the most repetitive IT task on the team right now? · Which MDM and identity provider do you use? · What does great look like at 90 days? · How do you use ElevenLabs internally?"},
+  {t:"Senior demands X while on Y", d:"Triage by impact, communicate to both sides, and escalate only if they truly conflict. Don't just obey the loudest voice — reason about impact out loud."},
+  {q:"Best structure for 'Why ElevenLabs?'", opts:["Say they're the leader in AI voice","One specific thing from immersion + 'I prepped by doing the job'","List your qualifications","Talk about salary and location"], a:1, why:"Specific product/blog detail proves genuine interest; the 'I built the job' half proves capability."},
+  {q:"A senior demands you drop everything for their issue while you're mid-incident. Best framing?", opts:["Always obey the senior","Triage by impact, communicate to both, escalate only if they truly conflict","Ignore them","Tell them to file a ticket"], a:1, why:"Reason about impact out loud and keep both parties informed rather than just obeying rank."},
+  {q:"Strongest answer to 'how did you know your project worked?'", opts:["'It worked great'","Concrete verification numbers + a demo GIF","'The tests passed'","'Nobody complained'"], a:1, why:"Specifics — '5/5 request types route in under 10 seconds' — beat vague reassurance every time."},
 ]},
 
 ];
@@ -340,6 +422,11 @@ const isQuiz = c => Array.isArray(c.opts);
 function currentDeck() { return DECKS.find(d => d.id === state.deck) || DECKS[0]; }
 
 function candidateCards() {
+  if (state.deck === "__quiz") {
+    const out = [];
+    DECKS.forEach(d => d.cards.forEach(c => { if (isQuiz(c)) out.push({ ...c, _deck: d.name, _key: d.id + "|" + cardId(c) }); }));
+    return out;
+  }
   if (state.deck === "__hard") {
     const out = [];
     DECKS.forEach(d => d.cards.forEach(c => {
@@ -401,6 +488,13 @@ function render() {
   hb.textContent = "★ Hard (" + hardCount + ")";
   hb.onclick = () => { state.deck = "__hard"; save(); buildOrder(false); render(); };
   bar.appendChild(hb);
+  let quizCount = 0;
+  DECKS.forEach(d => d.cards.forEach(c => { if (isQuiz(c)) quizCount++; }));
+  const qb = document.createElement("button");
+  qb.className = "deck-chip" + (state.deck === "__quiz" ? " active" : "");
+  qb.textContent = "❓ Quiz (" + quizCount + ")";
+  qb.onclick = () => { state.deck = "__quiz"; save(); buildOrder(true); render(); };
+  bar.appendChild(qb);
 
   $("dirBtn").textContent = state.dir === "t2d" ? "Term → Def" : "Def → Term";
 
@@ -550,7 +644,7 @@ document.addEventListener("keydown", e => {
 });
 
 applyTheme();
-if (!DECKS.some(d => d.id === state.deck) && !["__hard", "__due"].includes(state.deck)) state.deck = "framework";
+if (!DECKS.some(d => d.id === state.deck) && !["__hard", "__due", "__quiz"].includes(state.deck)) state.deck = "framework";
 buildOrder(false);
 render();
 </script>
