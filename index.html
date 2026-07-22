@@ -152,6 +152,19 @@
 // A card is a QUIZ if it has opts[]; otherwise a CONCEPT card {t: term, d: definition}.
 const DECKS = [
 
+{ id:"framework", name:"🧭 Framework", cards:[
+  {t:"The troubleshooting framework", d:"symptom → hypothesis → check → fix → verify — communicating throughout. This is what interviews really test: run this loop OUT LOUD for any scenario they throw at you."},
+  {t:"Step 1 — Clarify scope & impact", d:"Who's affected, what exactly is broken, how urgent? Sets priority before you touch anything."},
+  {t:"Step 2 — Reproduce", d:"Confirm you can trigger the problem. You can't verify a fix for something you can't reproduce."},
+  {t:"Step 3 — Isolate", d:"Is it the device, the network, or the app? Narrow the layer first. Classic isolation move: 'does it work on a phone hotspot?'"},
+  {t:"Step 4 — Simplest hypothesis first", d:"Start with the most likely, cheapest cause (cable, restart, DNS) before exotic ones."},
+  {t:"Step 5 — Fix, then verify", d:"Apply the fix, then confirm it actually worked — don't assume. Change one thing at a time so you know what fixed it."},
+  {t:"Step 6 — Document & communicate", d:"Record what happened and keep the user updated throughout, including a workaround while you work: 'here's what I'm checking, here's your workaround meanwhile.'"},
+  {q:"What's the core troubleshooting loop interviewers are really testing?", opts:["Restart, reinstall, replace","symptom → hypothesis → check → fix → verify","Escalate everything to the vendor","Google the error and paste the first fix"], a:1, why:"Run this loop out loud for any scenario, communicating the whole way."},
+  {q:"A user says 'the internet is down.' Best FIRST move?", opts:["Reinstall macOS","Clarify scope & impact — who, what, how urgent","Replace the router","Reset their password"], a:1, why:"Clarify scope first: one app, one site, one person, or everyone?"},
+  {q:"Fastest way to isolate network vs device for a connectivity issue?", opts:["Reinstall the OS","Try the phone hotspot","Replace the laptop","Call the ISP"], a:1, why:"If it works on the hotspot, the device is fine and the office network is the problem."},
+]},
+
 { id:"elevenlabs", name:"🎧 ElevenLabs", cards:[
   {t:"ElevenLabs — what it is", d:"An AI research + product company (founded Jan 2023) building human-like AI audio. Three platforms: ElevenAgents (voice/chat agents), ElevenCreative (speech/music/image/video), ElevenAPI (audio models for developers)."},
   {t:"ElevenAgents", d:"Lets businesses deploy voice & chat agents at scale — with the integrations, testing, monitoring and reliability needed for real customer experiences."},
@@ -165,17 +178,48 @@ const DECKS = [
 ]},
 
 { id:"macos", name:"🍎 macOS", cards:[
-  {t:"Force quit an app", d:"⌘ + ⌥ + Esc opens Force Quit. Or Activity Monitor → select → Quit. Terminal: killall AppName, or kill <pid>."},
-  {t:"Activity Monitor", d:"Shows CPU, memory, energy, disk and network usage per process; lets you force-quit a runaway process. The macOS analog of Windows Task Manager."},
-  {t:"FileVault", d:"macOS full-disk encryption. Data at rest is unreadable without the login password or recovery key. Usually enforced by MDM on company Macs."},
-  {t:"Gatekeeper", d:"Security feature that only lets apps run if they're signed/notarised by Apple; blocks unidentified developers by default."},
-  {t:"Recovery Mode", d:"Boot environment for repair/reinstall. Apple Silicon: hold the power button until 'Loading startup options'. Intel: hold ⌘ + R. Gives Disk Utility, reinstall macOS, and Terminal."},
-  {t:"Safe Mode", d:"Boots with minimal extensions and clears some caches to isolate software issues. Apple Silicon: hold power → select disk while holding Shift."},
-  {t:"Disk Utility — First Aid", d:"Checks and repairs disk/volume and filesystem errors. Run it from Recovery if the disk won't mount."},
-  {t:"Kernel panic", d:"The macOS equivalent of a crash — the OS halts and restarts. Often caused by a driver, failing hardware, or a bad peripheral."},
-  {q:"A Mac app is frozen. Fastest built-in way to force quit it?", opts:["Restart the whole Mac","⌘ + ⌥ + Esc (Force Quit)","Reinstall the app","Hold the power button"], a:1, why:"⌘ + ⌥ + Esc opens the Force Quit dialog instantly — no reboot needed."},
-  {q:"What does FileVault do?", opts:["Backs files up to iCloud","Encrypts the whole disk","Scans for viruses","Acts as a firewall"], a:1, why:"FileVault is full-disk encryption; data is unreadable without the password/recovery key."},
-  {q:"On an Apple Silicon Mac, how do you enter Recovery Mode?", opts:["Hold ⌘ + R at boot","Tap Esc repeatedly","Hold the power button until startup options load","Hold Shift while booting"], a:2, why:"Apple Silicon uses 'hold power until Loading startup options'. ⌘ + R is the older Intel method."},
+  {t:"System Settings vs Utilities", d:"System Settings = configure the Mac. Applications → Utilities = inspect & fix it (Keychain Access, Activity Monitor, Console, Disk Utility). Configure vs inspect/fix — the key mental split."},
+  {t:"Users & Groups / least privilege", d:"Admin vs standard accounts. Least privilege: most users should be standard, so a mistake or malware can't touch the whole system. On managed devices, auto-login is off."},
+  {t:"Privacy & Security pane", d:"The security hub: Gatekeeper (which apps can run), Firewall (incoming connections), and the Privacy list (which apps have Camera, Mic, Screen Recording, Full Disk Access, Accessibility)."},
+  {t:"Full Disk Access & Accessibility", d:"The two dangerous privacy permissions malware abuses. An unexpected prompt asking for either = pause and investigate."},
+  {t:"Gatekeeper", d:"Controls which apps are allowed to run: App Store / identified developers / blocked. Stops unsigned apps launching by default."},
+  {t:"FileVault", d:"Full-disk encryption. A lost/stolen laptop = unreadable data without the password or recovery key. Save the recovery key; MDM escrows it across a fleet."},
+  {t:"Keychain Access", d:"The macOS password vault — saved Wi-Fi and website passwords live here. Find a Wi-Fi password: search the network → double-click → Show Password → authenticate."},
+  {t:"Activity Monitor — 'my Mac is slow'", d:"The Task Manager. Sort by CPU (hot/fans) or Memory (beachball) and force-quit the stuck app. First stop for any 'slow Mac' ticket."},
+  {t:"Console", d:"Live system log viewer — a firehose of harmless background noise. Red = fault, yellow = error, but most are routine. Skill: filter by process name and read the error lines around the crash timestamp; don't panic at every red dot."},
+  {t:"Storage — 'disk full'", d:"A top-3 common ticket. Storage settings shows what's using space; the 'System Data' blob = caches/logs and is usually normal."},
+  {t:"Time Machine", d:"Built-in automatic backup; restore individual files or a whole system to a point in time."},
+  {t:"Terminal: system_profiler SPHardwareDataType", d:"Full hardware inventory — chip, RAM, serial number. Used for asset tracking and warranty lookups."},
+  {t:"Terminal: softwareupdate --list", d:"Checks pending macOS updates. Scriptable, so it gets reused inside a health-check script."},
+  {t:"Terminal: diskutil list", d:"Lists every disk, container and volume — the command-line Disk Utility."},
+  {t:"Terminal: df -h", d:"Disk space in readable GB. Check the 'Avail' column for free space."},
+  {t:"Terminal: top / uptime", d:"top = live process list (Activity Monitor's CLI twin; press q to quit). uptime = time since last reboot — 'have you restarted it?' in command form."},
+  {t:"Terminal: log show --last 5m | tail -50", d:"Last 5 minutes of system logs as text you can grep and filter — Console as text."},
+  {t:"Recovery Mode", d:"Boots OUTSIDE the OS into a utilities environment. Used to erase/reformat the disk (you can't erase the disk you're running from), reinstall macOS, or reset a password. Apple Silicon: shut down → hold power → 'Loading startup options' → Options. Mental model: operate on the disk from outside the disk."},
+  {t:"Safe Mode", d:"Boots the OS stripped down (no 3rd-party login items, minimal extensions, runs a disk check). If the problem VANISHES in Safe Mode, a 3rd-party app you installed is the culprit — not macOS. Apple Silicon: hold power → pick disk → hold Shift → 'Continue in Safe Mode'."},
+  {t:"APFS container vs volume", d:"Container = a shared pool of disk space. Volumes = separate filesystems ('rooms') inside it, all drawing from the same free-space pool — not fixed-size partitions. That's how a Lab volume is added next to Macintosh HD without shrinking anything."},
+  {t:"Volume group (System + Data)", d:"Every bootable macOS volume splits into two: a read-only System volume (the OS) + a paired Data volume (user files). That's why you see 'Macintosh HD' and 'Macintosh HD - Data' — normal, not two installs."},
+  {q:"What's the difference between System Settings and the Utilities folder?", opts:["No difference","System Settings configures the Mac; Utilities inspects & fixes it","Utilities is only on servers","System Settings is command-line"], a:1, why:"Configure vs inspect/fix — Keychain, Activity Monitor, Console and Disk Utility all live in Utilities."},
+  {q:"An app unexpectedly asks for Full Disk Access or Accessibility. What do you do?", opts:["Always approve it","Pause — those are the permissions malware abuses","Ignore it","Reinstall macOS"], a:1, why:"Full Disk Access and Accessibility are the dangerous ones; an unexpected prompt deserves a pause."},
+  {q:"'My Mac is slow.' Best first stop?", opts:["Reinstall macOS","Activity Monitor — sort by CPU/Memory, force-quit the culprit","Buy more RAM","Run a virus scan"], a:1, why:"Activity Monitor shows the hot/hungry process immediately."},
+  {q:"You need to erase the disk your Mac is currently running from. What do you use?", opts:["Activity Monitor","Recovery Mode","Safe Mode","Console"], a:1, why:"You can't erase the disk you're booted from — Recovery Mode operates on it from outside the OS."},
+  {q:"A crash disappears when you boot into Safe Mode. What does that tell you?", opts:["The hardware is failing","A 3rd-party app/login item is the culprit, not macOS","macOS is corrupted","The disk is full"], a:1, why:"Safe Mode loads minimal extensions and no 3rd-party login items, so if the issue vanishes, a 3rd-party app is to blame."},
+  {q:"What is an APFS container?", opts:["A fixed-size partition","A shared pool of disk space that volumes draw from","A backup file","An encrypted zip"], a:1, why:"Volumes are separate filesystems sharing the container's free space — not fixed partitions."},
+  {q:"Why do you see 'Macintosh HD' AND 'Macintosh HD - Data'?", opts:["Two macOS installs","One volume group: read-only System volume + paired Data volume","A backup copy","A disk error"], a:1, why:"Every bootable macOS splits into a read-only System volume and a Data volume for user files. Normal."},
+]},
+
+{ id:"wipe", name:"💿 Wipe & Rebuild", cards:[
+  {t:"Why wipe/rebuild matters", d:"A full wipe/rebuild is the #1 common IT task. You can't wipe your only Mac, so you practise by installing a 2nd isolated macOS on a new APFS 'Lab' volume — same real setup flow, zero risk to your files."},
+  {t:"Clean install — the steps", d:"1) Check free space (df -h). 2) Disk Utility → select the CONTAINER (not a volume) → Add APFS Volume, name 'Lab'. 3) softwareupdate --fetch-full-installer. 4) Run installer → pick Lab as destination. 5) Let it copy & reboot."},
+  {t:"The single highest-risk click", d:"Choosing the install destination. Picking the wrong disk wipes the real system. Slow down and confirm you selected the Lab volume."},
+  {t:"Secure token error (interview story)", d:"'This volume cannot be used because it has a secure token without any users.' On Apple Silicon a bootable volume needs a user account with a Secure Token. Cause: manually restarting mid-install instead of letting the installer reboot into Setup Assistant — left an OS with no user. Fix: erase Lab → reinstall → let it run uninterrupted to Setup Assistant."},
+  {t:"Erase All Content and Settings (EACAS)", d:"System Settings → General → Transfer or Reset → Erase All Content and Settings → admin password → confirm → auto signs out of Apple ID/Find My → reboots to the factory 'Hello' screen. The routine reissue path — ~95% of wipes — done from within macOS."},
+  {t:"EACAS vs full Recovery erase", d:"EACAS = routine reissue, device works fine, done from within macOS. Full Recovery erase + reinstall = the Mac won't boot, an older macOS, or you need to reformat the disk."},
+  {t:"Activation Lock", d:"Tied to Find My. EACAS signs out of Find My automatically. If you skip the sign-out (e.g. a manual wipe), Activation Lock stays ON and locks out the next user — a classic gotcha."},
+  {q:"Why practise a clean install on a 'Lab' volume instead of your main disk?", opts:["It's faster","Same real setup flow with zero risk to your files","Lab volumes boot quicker","It skips needing an installer"], a:1, why:"You can't wipe your only Mac; a Lab volume gives the identical flow safely."},
+  {q:"Which step of a clean install is the highest-risk?", opts:["Checking free space","Selecting the install destination disk","Downloading the installer","Naming the volume"], a:1, why:"Wrong destination = wiping the real system. Confirm you picked Lab."},
+  {q:"You do a manual wipe but forget to sign out of Find My. What happens?", opts:["Nothing","Activation Lock stays on and locks out the next user","The disk stays encrypted forever","macOS won't reinstall"], a:1, why:"Activation Lock is tied to Find My. EACAS signs out automatically; a manual wipe doesn't."},
+  {q:"When do you use a full Recovery erase instead of EACAS?", opts:["Always","When the Mac won't boot, runs older macOS, or needs a disk reformat","Never","Only on Windows"], a:1, why:"EACAS covers the ~95% routine case from within macOS; Recovery is for broken/older/reformat situations."},
 ]},
 
 { id:"mdm", name:"💻 MDM & Devices", cards:[
@@ -264,7 +308,7 @@ const LS_KEY = "itPrepV1";
 const DAY = 86400000, MIN = 60000;
 // Steps on "got it", in MINUTES: a same-day 10-min step, then the day ladder.
 const SRS_STEPS = [10, 1 * 1440, 3 * 1440, 7 * 1440, 16 * 1440, 35 * 1440];
-let state = { deck: "elevenlabs", dir: "t2d", theme: null, hard: {}, sched: {} };
+let state = { deck: "framework", dir: "t2d", theme: null, hard: {}, sched: {} };
 try { Object.assign(state, JSON.parse(localStorage.getItem(LS_KEY) || "{}")); } catch(e) {}
 if (!state.sched) state.sched = {};
 function save() { localStorage.setItem(LS_KEY, JSON.stringify(state)); }
@@ -506,7 +550,7 @@ document.addEventListener("keydown", e => {
 });
 
 applyTheme();
-if (!DECKS.some(d => d.id === state.deck) && !["__hard", "__due"].includes(state.deck)) state.deck = "elevenlabs";
+if (!DECKS.some(d => d.id === state.deck) && !["__hard", "__due"].includes(state.deck)) state.deck = "framework";
 buildOrder(false);
 render();
 </script>

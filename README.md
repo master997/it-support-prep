@@ -13,18 +13,24 @@ Open [index.html](index.html) in any browser — double-click it. No internet ne
 - Keys: **Space** flip · **1** didn't know · **2** got it · **1–4** answer a quiz · **← →** move.
 - **Term → Def** button flips concept cards to test recall (name the term from its definition) instead of recognition.
 
-## The decks (from the JD)
+## The decks
 
 | Deck | Covers |
 |------|--------|
+| 🧭 Framework | The troubleshooting loop (symptom → hypothesis → check → fix → verify) — the thing interviews actually test |
 | 🎧 ElevenLabs | What the company does (Agents/Creative/API), culture, the role itself — interview prep |
-| 🍎 macOS | Force quit, Activity Monitor, FileVault, Gatekeeper, Recovery/Safe Mode, Disk Utility |
+| 🍎 macOS | System Settings vs Utilities, least privilege, Gatekeeper, FileVault, Keychain, Activity Monitor, Console, Terminal commands, Recovery/Safe Mode, APFS containers & volumes |
+| 💿 Wipe & Rebuild | Clean install on a Lab volume, the secure-token gotcha, EACAS vs Recovery erase, Activation Lock |
 | 💻 MDM & Devices | MDM, Apple Business Manager, zero-touch/ADE, supervised devices, remote wipe, lifecycle |
 | 🌐 Networking | IP/DNS/DHCP, gateway, subnet, VPN, Wi-Fi bands, ports, TCP vs UDP, ping/traceroute |
 | 🔑 SaaS & Identity | SSO, IdP, SAML/OIDC, MFA, SCIM, offboarding, least privilege |
 | 📺 AV & Rooms | Zoom Rooms, HDMI vs USB-C, room audio/video troubleshooting order |
 | ⌨️ Bash | Shebang, chmod, variables, loops, pipes, grep, posting to Slack (the bonus skill) |
 | 🛠️ Support Skills | Troubleshooting method, escalation, SLAs, empathy, documentation |
+
+## Live site
+
+Published via GitHub Pages — every push to `main` redeploys automatically.
 
 ## Growing it
 
